@@ -1,0 +1,220 @@
+/**
+ * input.css — Form input components (Layer 3).
+ * References Layer 2 tokens only. No raw values.
+ */
+
+/* ── Base input ──────────────────────────────────────────────────── */
+
+.input {
+  display: block;
+  width: 100%;
+  padding-block: var(--spacing-2);
+  padding-inline: var(--spacing-3);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-normal);
+  line-height: var(--leading-normal);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border-emphasis);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xs);
+  transition:
+    border-color var(--motion-fast) var(--ease-out),
+    box-shadow   var(--motion-fast) var(--ease-out);
+  appearance: none;
+}
+
+.input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.input:hover:not(:disabled):not(:focus) {
+  border-color: var(--color-border-emphasis);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-border-focus);
+  box-shadow: var(--shadow-xs), 0 0 0 3px var(--color-interactive-muted);
+}
+
+.input:disabled {
+  background-color: var(--color-bg-muted);
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.input:read-only {
+  background-color: var(--color-bg-subtle);
+  cursor: default;
+}
+
+/* ── Error state ─────────────────────────────────────────────────── */
+
+.input-error {
+  border-color: var(--color-border-danger);
+}
+
+.input-error:focus {
+  border-color: var(--color-border-danger);
+  box-shadow: var(--shadow-xs), 0 0 0 3px var(--color-bg-danger);
+}
+
+/* ── Success state ───────────────────────────────────────────────── */
+
+.input-success {
+  border-color: var(--color-border-success);
+}
+
+.input-success:focus {
+  border-color: var(--color-border-success);
+  box-shadow: var(--shadow-xs), 0 0 0 3px var(--color-bg-success);
+}
+
+/* ── Sizes ───────────────────────────────────────────────────────── */
+
+.input-sm {
+  padding-block: var(--spacing-1);
+  padding-inline: var(--spacing-2);
+  font-size: var(--text-xs);
+  border-radius: var(--radius-sm);
+}
+
+.input-lg {
+  padding-block: var(--spacing-3);
+  padding-inline: var(--spacing-4);
+  font-size: var(--text-md);
+  border-radius: var(--radius-lg);
+}
+
+/* ── Textarea ────────────────────────────────────────────────────── */
+
+.textarea {
+  resize: vertical;
+  min-height: calc(var(--spacing-4) * 5);
+}
+
+/* ── Form field wrapper ──────────────────────────────────────────── */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+/* ── Label ───────────────────────────────────────────────────────── */
+
+.label {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-normal);
+  color: var(--color-text);
+}
+
+.label-required::after {
+  content: ' *';
+  color: var(--color-text-danger);
+}
+
+.label-optional::after {
+  content: ' (optional)';
+  font-size: var(--text-xs);
+  font-weight: var(--weight-normal);
+  color: var(--color-text-muted);
+}
+
+/* ── Helper / error text ─────────────────────────────────────────── */
+
+.field-hint {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  line-height: var(--leading-normal);
+}
+
+.field-error-msg {
+  font-size: var(--text-xs);
+  color: var(--color-text-danger);
+  line-height: var(--leading-normal);
+}
+
+/* ── Input group (with addons) ───────────────────────────────────── */
+
+.input-group {
+  display: flex;
+  align-items: stretch;
+}
+
+.input-group .input {
+  border-radius: var(--radius-none);
+  flex: 1;
+}
+
+.input-group .input:first-child { border-radius: var(--radius-md) var(--radius-none) var(--radius-none) var(--radius-md); }
+.input-group .input:last-child  { border-radius: var(--radius-none) var(--radius-md) var(--radius-md) var(--radius-none); }
+
+.input-addon {
+  display: flex;
+  align-items: center;
+  padding-inline: var(--spacing-3);
+  background-color: var(--color-bg-muted);
+  border: 1px solid var(--color-border-emphasis);
+  color: var(--color-text-subtle);
+  font-size: var(--text-sm);
+  white-space: nowrap;
+}
+
+.input-addon:first-child {
+  border-right: none;
+  border-radius: var(--radius-md) var(--radius-none) var(--radius-none) var(--radius-md);
+}
+
+.input-addon:last-child {
+  border-left: none;
+  border-radius: var(--radius-none) var(--radius-md) var(--radius-md) var(--radius-none);
+}
+
+/* ── Select ──────────────────────────────────────────────────────── */
+
+.select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23868e96' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--spacing-3) center;
+  padding-right: var(--spacing-8);
+  cursor: pointer;
+}
+
+/* ── Checkbox and Radio ──────────────────────────────────────────── */
+
+.checkbox,
+.radio {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  cursor: pointer;
+}
+
+.checkbox input[type="checkbox"],
+.radio input[type="radio"] {
+  width: var(--spacing-4);
+  height: var(--spacing-4);
+  border: 1px solid var(--color-border-emphasis);
+  border-radius: var(--radius-sm);
+  accent-color: var(--color-interactive);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.radio input[type="radio"] {
+  border-radius: var(--radius-full);
+}
+
+.checkbox-label,
+.radio-label {
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  line-height: var(--leading-normal);
+  user-select: none;
+}
