@@ -1,0 +1,318 @@
+/**
+ * tokens.css — AI Design System Token Layer
+ *
+ * Three-layer architecture:
+ *
+ *   Layer 1  --prim-*   Raw primitive values. Never reference in components.
+ *   Layer 2  --color-*, --spacing-*, --text-*, etc.
+ *                       Semantic aliases. Components use ONLY these.
+ *                       Each alias hooks an upstream DS via --ds-* with a
+ *                       fallback into the primitive layer.
+ *   Layer 3  Component CSS files — reference Layer 2 exclusively.
+ *
+ * Upstream DS integration:
+ *   Define --ds-* variables before importing this file and the fallback
+ *   chain resolves automatically.
+ *
+ *   :root { --ds-text: #1a1a2e; }   ← override a single alias
+ *   @import 'tokens.css';
+ */
+
+
+/* ═══════════════════════════════════════════════════════════════
+   LAYER 1 · PRIMITIVES
+   Raw design values. Reference via Layer 2 aliases only.
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+
+  /* ── Color: Neutral ──────────────────────────────────────────── */
+  --prim-neutral-0:    #ffffff;
+  --prim-neutral-50:   #f8f9fa;
+  --prim-neutral-100:  #f1f3f5;
+  --prim-neutral-200:  #e9ecef;
+  --prim-neutral-300:  #dee2e6;
+  --prim-neutral-400:  #ced4da;
+  --prim-neutral-500:  #adb5bd;
+  --prim-neutral-600:  #868e96;
+  --prim-neutral-700:  #495057;
+  --prim-neutral-800:  #343a40;
+  --prim-neutral-900:  #212529;
+  --prim-neutral-1000: #000000;
+
+  /* ── Color: Blue (primary/interactive) ──────────────────────── */
+  --prim-blue-50:  #e8f4fd;
+  --prim-blue-100: #bee3f8;
+  --prim-blue-200: #90cdf4;
+  --prim-blue-300: #63b3ed;
+  --prim-blue-400: #4299e1;
+  --prim-blue-500: #3182ce;
+  --prim-blue-600: #2b6cb0;
+  --prim-blue-700: #2c5282;
+  --prim-blue-800: #2a4365;
+  --prim-blue-900: #1a365d;
+
+  /* ── Color: Green (success) ──────────────────────────────────── */
+  --prim-green-50:  #f0fff4;
+  --prim-green-100: #c6f6d5;
+  --prim-green-200: #9ae6b4;
+  --prim-green-500: #38a169;
+  --prim-green-600: #2f855a;
+  --prim-green-700: #276749;
+
+  /* ── Color: Red (danger) ─────────────────────────────────────── */
+  --prim-red-50:  #fff5f5;
+  --prim-red-100: #fed7d7;
+  --prim-red-200: #feb2b2;
+  --prim-red-500: #e53e3e;
+  --prim-red-600: #c53030;
+  --prim-red-700: #9b2c2c;
+
+  /* ── Color: Yellow (warning) ─────────────────────────────────── */
+  --prim-yellow-50:  #fffff0;
+  --prim-yellow-100: #fefcbf;
+  --prim-yellow-200: #faf089;
+  --prim-yellow-500: #d69e2e;
+  --prim-yellow-600: #b7791f;
+
+  /* ── Spacing (4 px base grid) ────────────────────────────────── */
+  --prim-space-0:  0;
+  --prim-space-1:  0.25rem;   /*  4 px */
+  --prim-space-2:  0.5rem;    /*  8 px */
+  --prim-space-3:  0.75rem;   /* 12 px */
+  --prim-space-4:  1rem;      /* 16 px */
+  --prim-space-5:  1.25rem;   /* 20 px */
+  --prim-space-6:  1.5rem;    /* 24 px */
+  --prim-space-8:  2rem;      /* 32 px */
+  --prim-space-10: 2.5rem;    /* 40 px */
+  --prim-space-12: 3rem;      /* 48 px */
+  --prim-space-16: 4rem;      /* 64 px */
+  --prim-space-20: 5rem;      /* 80 px */
+  --prim-space-24: 6rem;      /* 96 px */
+
+  /* ── Typography: Font families ───────────────────────────────── */
+  --prim-font-sans:  'Inter', system-ui, -apple-system, BlinkMacSystemFont,
+                     'Segoe UI', Roboto, sans-serif;
+  --prim-font-mono:  'JetBrains Mono', 'Fira Code', 'Cascadia Code',
+                     Consolas, monospace;
+  --prim-font-serif: Georgia, 'Times New Roman', serif;
+
+  /* ── Typography: Size scale ──────────────────────────────────── */
+  --prim-size-xs:  0.75rem;   /* 12 px */
+  --prim-size-sm:  0.875rem;  /* 14 px */
+  --prim-size-md:  1rem;      /* 16 px */
+  --prim-size-lg:  1.125rem;  /* 18 px */
+  --prim-size-xl:  1.25rem;   /* 20 px */
+  --prim-size-2xl: 1.5rem;    /* 24 px */
+  --prim-size-3xl: 1.875rem;  /* 30 px */
+  --prim-size-4xl: 2.25rem;   /* 36 px */
+  --prim-size-5xl: 3rem;      /* 48 px */
+
+  /* ── Typography: Weights ─────────────────────────────────────── */
+  --prim-weight-normal:   400;
+  --prim-weight-medium:   500;
+  --prim-weight-semibold: 600;
+  --prim-weight-bold:     700;
+
+  /* ── Typography: Line heights ────────────────────────────────── */
+  --prim-leading-tight:   1.2;
+  --prim-leading-snug:    1.375;
+  --prim-leading-normal:  1.5;
+  --prim-leading-relaxed: 1.625;
+  --prim-leading-loose:   2;
+
+  /* ── Border radius ───────────────────────────────────────────── */
+  --prim-radius-none: 0;
+  --prim-radius-sm:   0.125rem;  /*  2 px */
+  --prim-radius-md:   0.25rem;   /*  4 px */
+  --prim-radius-lg:   0.5rem;    /*  8 px */
+  --prim-radius-xl:   0.75rem;   /* 12 px */
+  --prim-radius-2xl:  1rem;      /* 16 px */
+  --prim-radius-full: 9999px;
+
+  /* ── Elevation: Box shadows ──────────────────────────────────── */
+  --prim-shadow-none:  none;
+  --prim-shadow-xs:    0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --prim-shadow-sm:    0 1px 3px 0 rgb(0 0 0 / 0.10),
+                       0 1px 2px -1px rgb(0 0 0 / 0.10);
+  --prim-shadow-md:    0 4px 6px -1px rgb(0 0 0 / 0.10),
+                       0 2px 4px -2px rgb(0 0 0 / 0.10);
+  --prim-shadow-lg:    0 10px 15px -3px rgb(0 0 0 / 0.10),
+                       0 4px 6px -4px rgb(0 0 0 / 0.10);
+  --prim-shadow-xl:    0 20px 25px -5px rgb(0 0 0 / 0.10),
+                       0 8px 10px -6px rgb(0 0 0 / 0.10);
+  --prim-shadow-2xl:   0 25px 50px -12px rgb(0 0 0 / 0.25);
+  --prim-shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+
+  /* ── Z-index scale ───────────────────────────────────────────── */
+  --prim-z-below:    -1;
+  --prim-z-base:      0;
+  --prim-z-raised:   10;
+  --prim-z-dropdown: 100;
+  --prim-z-sticky:   200;
+  --prim-z-overlay:  300;
+  --prim-z-modal:    400;
+  --prim-z-popover:  500;
+  --prim-z-toast:    600;
+  --prim-z-tooltip:  700;
+
+  /* ── Motion: Durations ───────────────────────────────────────── */
+  --prim-dur-instant: 0ms;
+  --prim-dur-fast:    150ms;
+  --prim-dur-normal:  250ms;
+  --prim-dur-slow:    400ms;
+  --prim-dur-slower:  600ms;
+
+  /* ── Motion: Easing curves ───────────────────────────────────── */
+  --prim-ease-linear:  linear;
+  --prim-ease-in:      cubic-bezier(0.4, 0, 1, 1);
+  --prim-ease-out:     cubic-bezier(0, 0, 0.2, 1);
+  --prim-ease-in-out:  cubic-bezier(0.4, 0, 0.2, 1);
+  --prim-ease-spring:  cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   LAYER 2 · SEMANTIC ALIASES
+   Components reference ONLY these variables.
+   Override any --ds-* variable before this file to integrate an
+   upstream design system without touching component code.
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+
+  /* ── Text colors ─────────────────────────────────────────────── */
+  --color-text:              var(--ds-text,              var(--prim-neutral-900));
+  --color-text-subtle:       var(--ds-text-subtle,       var(--prim-neutral-600));
+  --color-text-muted:        var(--ds-text-muted,        var(--prim-neutral-500));
+  --color-text-disabled:     var(--ds-text-disabled,     var(--prim-neutral-400));
+  --color-text-inverse:      var(--ds-text-inverse,      var(--prim-neutral-0));
+  --color-text-link:         var(--ds-text-link,         var(--prim-blue-500));
+  --color-text-link-hover:   var(--ds-text-link-hover,   var(--prim-blue-600));
+  --color-text-danger:       var(--ds-text-danger,       var(--prim-red-600));
+  --color-text-success:      var(--ds-text-success,      var(--prim-green-600));
+  --color-text-warning:      var(--ds-text-warning,      var(--prim-yellow-600));
+  --color-text-info:         var(--ds-text-info,         var(--prim-blue-500));
+
+  /* ── Background colors ───────────────────────────────────────── */
+  --color-bg:                var(--ds-bg,                var(--prim-neutral-0));
+  --color-bg-subtle:         var(--ds-bg-subtle,         var(--prim-neutral-50));
+  --color-bg-muted:          var(--ds-bg-muted,          var(--prim-neutral-100));
+  --color-bg-emphasis:       var(--ds-bg-emphasis,       var(--prim-neutral-800));
+  --color-bg-inverse:        var(--ds-bg-inverse,        var(--prim-neutral-900));
+  --color-bg-danger:         var(--ds-bg-danger,         var(--prim-red-50));
+  --color-bg-success:        var(--ds-bg-success,        var(--prim-green-50));
+  --color-bg-warning:        var(--ds-bg-warning,        var(--prim-yellow-50));
+  --color-bg-info:           var(--ds-bg-info,           var(--prim-blue-50));
+
+  /* ── Border colors ───────────────────────────────────────────── */
+  --color-border:            var(--ds-border,            var(--prim-neutral-200));
+  --color-border-subtle:     var(--ds-border-subtle,     var(--prim-neutral-100));
+  --color-border-emphasis:   var(--ds-border-emphasis,   var(--prim-neutral-400));
+  --color-border-focus:      var(--ds-border-focus,      var(--prim-blue-400));
+  --color-border-danger:     var(--ds-border-danger,     var(--prim-red-500));
+  --color-border-success:    var(--ds-border-success,    var(--prim-green-500));
+
+  /* ── Interactive colors ──────────────────────────────────────── */
+  --color-interactive:              var(--ds-interactive,              var(--prim-blue-500));
+  --color-interactive-hover:        var(--ds-interactive-hover,        var(--prim-blue-600));
+  --color-interactive-active:       var(--ds-interactive-active,       var(--prim-blue-700));
+  --color-interactive-muted:        var(--ds-interactive-muted,        var(--prim-blue-50));
+  --color-interactive-fg:           var(--ds-interactive-fg,           var(--prim-neutral-0));
+  --color-interactive-danger:       var(--ds-interactive-danger,       var(--prim-red-500));
+  --color-interactive-danger-hover: var(--ds-interactive-danger-hover, var(--prim-red-600));
+  --color-interactive-danger-fg:    var(--ds-interactive-danger-fg,    var(--prim-neutral-0));
+
+  /* ── Surface/overlay colors ──────────────────────────────────── */
+  --color-overlay:           var(--ds-overlay,           var(--prim-neutral-900));
+  --color-overlay-alpha:     var(--ds-overlay-alpha,     rgb(33 37 41 / 0.5));
+
+  /* ── Spacing ─────────────────────────────────────────────────── */
+  --spacing-0:  var(--ds-spacing-0,  var(--prim-space-0));
+  --spacing-1:  var(--ds-spacing-1,  var(--prim-space-1));
+  --spacing-2:  var(--ds-spacing-2,  var(--prim-space-2));
+  --spacing-3:  var(--ds-spacing-3,  var(--prim-space-3));
+  --spacing-4:  var(--ds-spacing-4,  var(--prim-space-4));
+  --spacing-5:  var(--ds-spacing-5,  var(--prim-space-5));
+  --spacing-6:  var(--ds-spacing-6,  var(--prim-space-6));
+  --spacing-8:  var(--ds-spacing-8,  var(--prim-space-8));
+  --spacing-10: var(--ds-spacing-10, var(--prim-space-10));
+  --spacing-12: var(--ds-spacing-12, var(--prim-space-12));
+  --spacing-16: var(--ds-spacing-16, var(--prim-space-16));
+  --spacing-20: var(--ds-spacing-20, var(--prim-space-20));
+  --spacing-24: var(--ds-spacing-24, var(--prim-space-24));
+
+  /* ── Typography: Font families ───────────────────────────────── */
+  --font-sans:  var(--ds-font-sans,  var(--prim-font-sans));
+  --font-mono:  var(--ds-font-mono,  var(--prim-font-mono));
+  --font-serif: var(--ds-font-serif, var(--prim-font-serif));
+
+  /* ── Typography: Sizes ───────────────────────────────────────── */
+  --text-xs:  var(--ds-text-xs,  var(--prim-size-xs));
+  --text-sm:  var(--ds-text-sm,  var(--prim-size-sm));
+  --text-md:  var(--ds-text-md,  var(--prim-size-md));
+  --text-lg:  var(--ds-text-lg,  var(--prim-size-lg));
+  --text-xl:  var(--ds-text-xl,  var(--prim-size-xl));
+  --text-2xl: var(--ds-text-2xl, var(--prim-size-2xl));
+  --text-3xl: var(--ds-text-3xl, var(--prim-size-3xl));
+  --text-4xl: var(--ds-text-4xl, var(--prim-size-4xl));
+  --text-5xl: var(--ds-text-5xl, var(--prim-size-5xl));
+
+  /* ── Typography: Weights ─────────────────────────────────────── */
+  --weight-normal:   var(--ds-weight-normal,   var(--prim-weight-normal));
+  --weight-medium:   var(--ds-weight-medium,   var(--prim-weight-medium));
+  --weight-semibold: var(--ds-weight-semibold, var(--prim-weight-semibold));
+  --weight-bold:     var(--ds-weight-bold,     var(--prim-weight-bold));
+
+  /* ── Typography: Line heights ────────────────────────────────── */
+  --leading-tight:   var(--ds-leading-tight,   var(--prim-leading-tight));
+  --leading-snug:    var(--ds-leading-snug,    var(--prim-leading-snug));
+  --leading-normal:  var(--ds-leading-normal,  var(--prim-leading-normal));
+  --leading-relaxed: var(--ds-leading-relaxed, var(--prim-leading-relaxed));
+  --leading-loose:   var(--ds-leading-loose,   var(--prim-leading-loose));
+
+  /* ── Border radius ───────────────────────────────────────────── */
+  --radius-none: var(--ds-radius-none, var(--prim-radius-none));
+  --radius-sm:   var(--ds-radius-sm,   var(--prim-radius-sm));
+  --radius-md:   var(--ds-radius-md,   var(--prim-radius-md));
+  --radius-lg:   var(--ds-radius-lg,   var(--prim-radius-lg));
+  --radius-xl:   var(--ds-radius-xl,   var(--prim-radius-xl));
+  --radius-2xl:  var(--ds-radius-2xl,  var(--prim-radius-2xl));
+  --radius-full: var(--ds-radius-full, var(--prim-radius-full));
+
+  /* ── Elevation / Shadows ─────────────────────────────────────── */
+  --shadow-none:  var(--ds-shadow-none,  var(--prim-shadow-none));
+  --shadow-xs:    var(--ds-shadow-xs,    var(--prim-shadow-xs));
+  --shadow-sm:    var(--ds-shadow-sm,    var(--prim-shadow-sm));
+  --shadow-md:    var(--ds-shadow-md,    var(--prim-shadow-md));
+  --shadow-lg:    var(--ds-shadow-lg,    var(--prim-shadow-lg));
+  --shadow-xl:    var(--ds-shadow-xl,    var(--prim-shadow-xl));
+  --shadow-2xl:   var(--ds-shadow-2xl,   var(--prim-shadow-2xl));
+  --shadow-inner: var(--ds-shadow-inner, var(--prim-shadow-inner));
+
+  /* ── Z-index ─────────────────────────────────────────────────── */
+  --z-below:    var(--ds-z-below,    var(--prim-z-below));
+  --z-base:     var(--ds-z-base,     var(--prim-z-base));
+  --z-raised:   var(--ds-z-raised,   var(--prim-z-raised));
+  --z-dropdown: var(--ds-z-dropdown, var(--prim-z-dropdown));
+  --z-sticky:   var(--ds-z-sticky,   var(--prim-z-sticky));
+  --z-overlay:  var(--ds-z-overlay,  var(--prim-z-overlay));
+  --z-modal:    var(--ds-z-modal,    var(--prim-z-modal));
+  --z-popover:  var(--ds-z-popover,  var(--prim-z-popover));
+  --z-toast:    var(--ds-z-toast,    var(--prim-z-toast));
+  --z-tooltip:  var(--ds-z-tooltip,  var(--prim-z-tooltip));
+
+  /* ── Motion: Durations ───────────────────────────────────────── */
+  --motion-instant: var(--ds-motion-instant, var(--prim-dur-instant));
+  --motion-fast:    var(--ds-motion-fast,    var(--prim-dur-fast));
+  --motion-normal:  var(--ds-motion-normal,  var(--prim-dur-normal));
+  --motion-slow:    var(--ds-motion-slow,    var(--prim-dur-slow));
+  --motion-slower:  var(--ds-motion-slower,  var(--prim-dur-slower));
+
+  /* ── Motion: Easing ──────────────────────────────────────────── */
+  --ease-linear:  var(--ds-ease-linear,  var(--prim-ease-linear));
+  --ease-in:      var(--ds-ease-in,      var(--prim-ease-in));
+  --ease-out:     var(--ds-ease-out,     var(--prim-ease-out));
+  --ease-in-out:  var(--ds-ease-in-out,  var(--prim-ease-in-out));
+  --ease-spring:  var(--ds-ease-spring,  var(--prim-ease-spring));
+}

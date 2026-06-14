@@ -1,0 +1,164 @@
+/**
+ * alert.css — Alert / notification banner component (Layer 3).
+ * References Layer 2 tokens only. No raw values.
+ */
+
+/* ── Base alert ──────────────────────────────────────────────────── */
+
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid transparent;
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+}
+
+.alert-icon {
+  flex-shrink: 0;
+  width: var(--spacing-5);
+  height: var(--spacing-5);
+  margin-top: var(--spacing-0);
+}
+
+.alert-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.alert-title {
+  font-weight: var(--weight-semibold);
+  color: inherit;
+  margin-bottom: var(--spacing-1);
+  line-height: var(--leading-tight);
+}
+
+.alert-description {
+  color: inherit;
+  opacity: 0.9;
+}
+
+.alert-actions {
+  display: flex;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-3);
+  flex-wrap: wrap;
+}
+
+.alert-close {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-5);
+  height: var(--spacing-5);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.7;
+  background: none;
+  border: none;
+  padding: var(--spacing-0);
+  font: inherit;
+  transition: opacity var(--motion-fast) var(--ease-out);
+}
+
+.alert-close:hover { opacity: 1; }
+
+/* ── Semantic variants ───────────────────────────────────────────── */
+
+.alert-info {
+  background-color: var(--color-bg-info);
+  border-color: var(--color-border-focus);
+  color: var(--color-text-info);
+}
+
+.alert-success {
+  background-color: var(--color-bg-success);
+  border-color: var(--color-border-success);
+  color: var(--color-text-success);
+}
+
+.alert-warning {
+  background-color: var(--color-bg-warning);
+  border-color: var(--color-border-emphasis);
+  color: var(--color-text-warning);
+}
+
+.alert-danger {
+  background-color: var(--color-bg-danger);
+  border-color: var(--color-border-danger);
+  color: var(--color-text-danger);
+}
+
+.alert-neutral {
+  background-color: var(--color-bg-muted);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+/* ── Solid variants ──────────────────────────────────────────────── */
+
+.alert-solid-info {
+  background-color: var(--color-interactive);
+  border-color: var(--color-interactive);
+  color: var(--color-interactive-fg);
+}
+
+.alert-solid-success {
+  background-color: var(--color-text-success);
+  border-color: var(--color-text-success);
+  color: var(--color-interactive-fg);
+}
+
+.alert-solid-danger {
+  background-color: var(--color-interactive-danger);
+  border-color: var(--color-interactive-danger);
+  color: var(--color-interactive-danger-fg);
+}
+
+/* ── Sizes ───────────────────────────────────────────────────────── */
+
+.alert-sm {
+  padding: var(--spacing-3);
+  font-size: var(--text-xs);
+}
+
+.alert-lg {
+  padding: var(--spacing-5) var(--spacing-6);
+  font-size: var(--text-md);
+}
+
+/* ── Banner (full-width) ─────────────────────────────────────────── */
+
+.alert-banner {
+  border-radius: var(--radius-none);
+  border-left: none;
+  border-right: none;
+}
+
+/* ── Toast (floating) ────────────────────────────────────────────── */
+
+.alert-toast {
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  max-width: calc(var(--spacing-12) * 5);
+  pointer-events: all;
+}
+
+/* ── Toast container ─────────────────────────────────────────────── */
+
+.toast-region {
+  position: fixed;
+  bottom: var(--spacing-6);
+  right: var(--spacing-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  z-index: var(--z-toast);
+  pointer-events: none;
+  max-width: calc(var(--spacing-12) * 5);
+}

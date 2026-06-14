@@ -1,0 +1,153 @@
+/**
+ * card.css — Card component (Layer 3).
+ * References Layer 2 tokens only. No raw values.
+ */
+
+/* ── Base card ───────────────────────────────────────────────────── */
+
+.card {
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+/* ── Elevated variant ────────────────────────────────────────────── */
+
+.card-elevated {
+  border-color: transparent;
+  box-shadow: var(--shadow-md);
+}
+
+/* ── Flat variant ────────────────────────────────────────────────── */
+
+.card-flat {
+  box-shadow: var(--shadow-none);
+  background-color: var(--color-bg-subtle);
+}
+
+/* ── Ghost variant ───────────────────────────────────────────────── */
+
+.card-ghost {
+  border-color: transparent;
+  box-shadow: var(--shadow-none);
+  background-color: transparent;
+}
+
+/* ── Interactive card ────────────────────────────────────────────── */
+
+.card-interactive {
+  cursor: pointer;
+  transition:
+    box-shadow   var(--motion-fast) var(--ease-out),
+    border-color var(--motion-fast) var(--ease-out),
+    transform    var(--motion-fast) var(--ease-out);
+}
+
+.card-interactive:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-border-emphasis);
+}
+
+.card-interactive:active {
+  box-shadow: var(--shadow-xs);
+  transform: translateY(0);
+}
+
+.card-interactive:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: var(--spacing-1);
+}
+
+/* ── Card sections ───────────────────────────────────────────────── */
+
+.card-header {
+  padding: var(--spacing-4) var(--spacing-5);
+  border-bottom: 1px solid var(--color-border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+}
+
+.card-body {
+  padding: var(--spacing-5);
+}
+
+.card-footer {
+  padding: var(--spacing-4) var(--spacing-5);
+  border-top: 1px solid var(--color-border-subtle);
+  background-color: var(--color-bg-subtle);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+/* ── Card title ──────────────────────────────────────────────────── */
+
+.card-title {
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  color: var(--color-text);
+  margin: var(--spacing-0);
+}
+
+.card-subtitle {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-normal);
+  line-height: var(--leading-normal);
+  color: var(--color-text-subtle);
+  margin: var(--spacing-0);
+}
+
+/* ── Card media ──────────────────────────────────────────────────── */
+
+.card-media {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  display: block;
+}
+
+.card-media-sm { aspect-ratio: 4 / 3; }
+.card-media-sq { aspect-ratio: 1 / 1; }
+
+/* ── Padding modifiers ───────────────────────────────────────────── */
+
+.card-body-sm { padding: var(--spacing-4); }
+.card-body-lg { padding: var(--spacing-8); }
+
+/* ── Status variants ─────────────────────────────────────────────── */
+
+.card-danger {
+  border-color: var(--color-border-danger);
+  background-color: var(--color-bg-danger);
+}
+
+.card-success {
+  border-color: var(--color-border-success);
+  background-color: var(--color-bg-success);
+}
+
+.card-warning {
+  border-color: var(--color-border-emphasis);
+  background-color: var(--color-bg-warning);
+}
+
+.card-info {
+  border-color: var(--color-border-focus);
+  background-color: var(--color-bg-info);
+}
+
+/* ── Card group ──────────────────────────────────────────────────── */
+
+.card-group {
+  display: grid;
+  gap: var(--spacing-4);
+}
+
+.card-group-2 { grid-template-columns: repeat(2, 1fr); }
+.card-group-3 { grid-template-columns: repeat(3, 1fr); }
+.card-group-4 { grid-template-columns: repeat(4, 1fr); }

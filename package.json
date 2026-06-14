@@ -1,0 +1,11 @@
+{
+  "name": "ai-design-system",
+  "version": "1.0.0",
+  "description": "LLM-ready design system with a complete token layer and structured specs.",
+  "scripts": {
+    "audit": "node scripts/token-audit.js .",
+    "audit:src": "node scripts/token-audit.js src"
+  },
+  "keywords": ["design-system", "css", "tokens", "design-tokens"],
+  "license": "MIT"
+}
