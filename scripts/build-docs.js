@@ -128,6 +128,42 @@ useEffect(() => { applyAdapter('materialUI'); }, []);`,
       '.radio':    '<Radio>',
     },
   },
+
+  vanilla: {
+    name:           'Vanilla HTML/CSS/JS',
+    version:        'native',
+    docsDir:        'vanilla-docs',
+    scraper:        path.join(__dirname, 'build-vanilla-docs.js'),
+    adapterCss:     'lib-adapters/vanilla.css',
+    adapterSpec:    'specs/adapters/custom.md',
+    componentKey:   null,
+    docsUrl:        'https://developer.mozilla.org/en-US/docs/Web/HTML',
+    setupNote:      'No framework required. Link tokens.css and the component CSS files directly in your HTML.',
+    importBlock: `\
+<!-- In your <head> — order matters -->
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="src/base/reset.css">
+<link rel="stylesheet" href="src/base/typography.css">
+
+<!-- Add only the components you use -->
+<link rel="stylesheet" href="src/components/button.css">
+<link rel="stylesheet" href="src/components/card.css">
+<link rel="stylesheet" href="src/components/input.css">
+<link rel="stylesheet" href="src/components/badge.css">
+<link rel="stylesheet" href="src/components/alert.css">`,
+    jsSetup: `\
+// No adapter or framework required.
+// Optional: override tokens before importing tokens.css
+// :root { --ds-interactive: #6366f1; }`,
+    classMap: {
+      '.btn .btn-primary':     '<button class="btn btn-primary">',
+      '.card':                 '<div class="card">',
+      '.input (in .field)':    '<input class="input" type="text">',
+      '.badge .badge-success': '<span class="badge badge-success">',
+      '.alert .alert-info':    '<div class="alert alert-info" role="status">',
+      '.prose':                '<article class="prose">',
+    },
+  },
 };
 
 /* ─── Argument parsing ───────────────────────────────────────────────────── */
@@ -155,12 +191,17 @@ function findPython() {
 /* ─── Scraper runner ─────────────────────────────────────────────────────── */
 
 function runScraper(lib, python) {
-  console.log(`\n📥  Scraping ${lib.name} docs…`);
+  const isNode = lib.scraper.endsWith('.js');
+  const label  = isNode ? 'Generating' : 'Scraping';
+  console.log(`\n📥  ${label} ${lib.name} docs…`);
+
   if (!fs.existsSync(lib.scraper)) {
     console.error(`✗  Scraper not found: ${lib.scraper}`);
     process.exit(1);
   }
-  const r = spawnSync(python, [lib.scraper], {
+
+  const runtime = isNode ? process.execPath : python;
+  const r = spawnSync(runtime, [lib.scraper], {
     cwd: ROOT,
     stdio: 'inherit',
     encoding: 'utf8',
@@ -392,8 +433,8 @@ function main() {
   const { library: libKey, force } = parseArgs();
 
   if (!libKey) {
-    console.error('Usage: node scripts/build-docs.js --library=<shadcn|antdesign|mui>');
-    console.error('       node scripts/build-docs.js --library=shadcn --force');
+    console.error('Usage: node scripts/build-docs.js --library=<shadcn|antdesign|mui|vanilla>');
+    console.error('       node scripts/build-docs.js --library=vanilla --force');
     process.exit(1);
   }
 
@@ -403,14 +444,15 @@ function main() {
     process.exit(1);
   }
 
-  const docsIndex = path.join(ROOT, lib.docsDir, 'INDEX.md');
-  const docsExist = fs.existsSync(docsIndex);
+  const isNodeScraper = lib.scraper.endsWith('.js');
+  const docsIndex     = path.join(ROOT, lib.docsDir, 'INDEX.md');
+  const docsExist     = fs.existsSync(docsIndex);
 
   if (docsExist && !force) {
-    console.log(`✓  ${lib.name} docs already exist in ${lib.docsDir}/ (use --force to re-scrape).`);
+    console.log(`✓  ${lib.name} docs already exist in ${lib.docsDir}/ (use --force to regenerate).`);
   } else {
-    const python = findPython();
-    if (!python) {
+    const python = isNodeScraper ? null : findPython();
+    if (!isNodeScraper && !python) {
       console.error('✗  Python 3 not found. Install Python 3 to run the scraper.');
       process.exit(1);
     }

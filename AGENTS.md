@@ -1,7 +1,7 @@
 # AI Design System — Agent Instructions
 
-> **Active library: shadcn/ui v4**
-> Component docs: `shadcn-docs/` · Adapter: `lib-adapters/shadcn.css`
+> **Active library: Vanilla HTML/CSS/JS native**
+> Component docs: `vanilla-docs/` · Adapter: `lib-adapters/vanilla.css`
 > Switch library: `npm run docs -- --library=<shadcn|antdesign|mui>`
 > This file is auto-maintained — do not edit the "Active library" section manually.
 
@@ -25,8 +25,8 @@ Key capabilities:
 
 1. **Tokens only in component CSS.** Use `var(--color-*)`, `var(--spacing-*)`,
    `var(--text-*)`, `var(--radius-*)`. Never raw `px`, `#hex`, or `--prim-*`.
-2. **Read component docs before writing code.** Check `shadcn-docs/{component}.md`
-   for shadcn/ui-specific usage, then `specs/components/` for AI DS class names.
+2. **Read component docs before writing code.** Check `vanilla-docs/{component}.md`
+   for Vanilla HTML/CSS/JS-specific usage, then `specs/components/` for AI DS class names.
 3. **Read specs before writing CSS.** Check `specs/tokens/token-reference.md` first.
 4. **Audit must pass.** Run `npm run audit` before every commit. Exit 0 required.
 5. **Adapter files are exempt** from the token audit (`lib-adapters/` is skipped).
@@ -71,7 +71,7 @@ npm run audit:src    # scan src/ only
 
 ```
 tokens.css                     ← Layer 1 + Layer 2 tokens (source of truth)
-shadcn-docs/                        ← Active library docs (59 components)
+vanilla-docs/                        ← Active library docs (6 components)
   INDEX.md                     ← Component list — start here
   {component}.md               ← Per-component: import, props, DS token mapping
 src/
@@ -83,14 +83,14 @@ src/
   components/badge.css         ← .badge, .badge-success, .badge-count …
   components/alert.css         ← .alert, .alert-danger, .alert-toast …
 lib-adapters/
-  shadcn.css                    ← Active adapter (shadcn/ui → --ds-*)
+  vanilla.css                   ← Active adapter (Vanilla HTML/CSS/JS → --ds-*)
   component-map.js             ← Cross-library component equivalence
   index.js                     ← detectLibrary, applyAdapter, createAdapter
 specs/
   tokens/token-reference.md    ← Every token, its value and purpose
   foundations/                 ← color, spacing, typography, radius, elevation, motion
   components/                  ← Per-component anatomy, API, token table, examples
-  adapters/shadcn.md               ← Active adapter setup guide
+  adapters/custom.md               ← Active adapter setup guide
 scripts/
   build-docs.js                ← Switch active library (npm run docs:shadcn etc.)
   token-audit.js               ← CI audit script
@@ -99,51 +99,53 @@ scripts/
 ---
 
 <!-- ACTIVE-LIBRARY:START -->
-## Active component library: shadcn/ui v4
+## Active component library: Vanilla HTML/CSS/JS native
 
-**Component docs:** `shadcn-docs/` (59 components — read before generating code)
-**Index:** `shadcn-docs/INDEX.md`
-**Adapter CSS:** `lib-adapters/shadcn.css`
-**Adapter spec:** `specs/adapters/shadcn.md`
-**Official docs:** https://ui.shadcn.com/docs/components
+**Component docs:** `vanilla-docs/` (6 components — read before generating code)
+**Index:** `vanilla-docs/INDEX.md`
+**Adapter CSS:** `lib-adapters/vanilla.css`
+**Adapter spec:** `specs/adapters/custom.md`
+**Official docs:** https://developer.mozilla.org/en-US/docs/Web/HTML
 
 ### Setup
 
-Requires shadcn/ui v4 with globals.css defining --primary, --background, --foreground, --border, --ring, --radius.
+No framework required. Link tokens.css and the component CSS files directly in your HTML.
 
 ```css
-/* 1. shadcn globals */
-@import '@/styles/globals.css';
+<!-- In your <head> — order matters -->
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="src/base/reset.css">
+<link rel="stylesheet" href="src/base/typography.css">
 
-/* 2. AI Design System adapter */
-@import 'ai-design-system/lib-adapters/shadcn.css';
-
-/* 3. AI Design System tokens */
-@import 'ai-design-system/tokens.css';
+<!-- Add only the components you use -->
+<link rel="stylesheet" href="src/components/button.css">
+<link rel="stylesheet" href="src/components/card.css">
+<link rel="stylesheet" href="src/components/input.css">
+<link rel="stylesheet" href="src/components/badge.css">
+<link rel="stylesheet" href="src/components/alert.css">
 ```
 
 ```js
-import { applyAdapter } from 'ai-design-system/lib-adapters';
-applyAdapter('shadcn');
+// No adapter or framework required.
+// Optional: override tokens before importing tokens.css
+// :root { --ds-interactive: #6366f1; }
 ```
 
-### AI Design System → shadcn/ui class map
+### AI Design System → Vanilla HTML/CSS/JS class map
 
-| AI DS class | shadcn/ui equivalent |
+| AI DS class | Vanilla HTML/CSS/JS equivalent |
 |---|---|
-| `.btn` | `<Button>` |
-| `.card` | `<Card>` |
-| `.input` | `<Input>` |
-| `.badge` | `<Badge>` |
-| `.alert` | `<Alert>` |
-| `.select` | `<Select>` |
-| `.checkbox` | `<Checkbox>` |
-| `.radio` | `<RadioGroupItem>` |
+| `.btn .btn-primary` | `<button class="btn btn-primary">` |
+| `.card` | `<div class="card">` |
+| `.input (in .field)` | `<input class="input" type="text">` |
+| `.badge .badge-success` | `<span class="badge badge-success">` |
+| `.alert .alert-info` | `<div class="alert alert-info" role="status">` |
+| `.prose` | `<article class="prose">` |
 
 ### Rules when writing code with this library
 
-- Read `shadcn-docs/{component}.md` before generating code for any component.
-- Use `getComponentInfo(concept, 'shadcn')` from `lib-adapters/component-map.js`
+- Read `vanilla-docs/{component}.md` before generating code for any component.
+- Use `getComponentInfo(concept, 'null')` from `lib-adapters/component-map.js`
   to find the correct import and props for any AI DS concept.
 - Apply the CSS adapter before `tokens.css` so `--ds-*` hooks resolve correctly.
 - Never hard-code colours, spacing, or typography — use `var(--color-*)`, `var(--spacing-*)`, etc.

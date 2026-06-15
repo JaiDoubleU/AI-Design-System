@@ -1,0 +1,34 @@
+/*
+ * Vanilla HTML/CSS/JS adapter
+ *
+ * When using the AI Design System without any upstream component library,
+ * no adapter is required — tokens.css resolves all --color-*, --spacing-*,
+ * and other Layer 2 tokens directly from the --prim-* primitive layer.
+ *
+ * This file exists as a no-op placeholder so the build system can reference
+ * a consistent adapter path for every library mode (including vanilla).
+ *
+ * Setup — link directly in HTML:
+ *
+ *   <link rel="stylesheet" href="tokens.css">
+ *   <link rel="stylesheet" href="src/base/reset.css">
+ *   <link rel="stylesheet" href="src/base/typography.css">
+ *   <link rel="stylesheet" href="src/components/button.css">
+ *   <!-- add other components as needed -->
+ *
+ * Or via CSS import (bundler / PostCSS):
+ *
+ *   @import 'ai-design-system/tokens.css';
+ *   @import 'ai-design-system/src/base/reset.css';
+ *   @import 'ai-design-system/src/components/button.css';
+ *
+ * To override the default palette, define --ds-* before importing tokens.css:
+ *
+ *   :root {
+ *     --ds-interactive: #6366f1;
+ *     --ds-font-sans:   'Inter', sans-serif;
+ *   }
+ *   @import 'ai-design-system/tokens.css';
+ *
+ * Full --ds-* reference: specs/adapters/custom.md
+ */

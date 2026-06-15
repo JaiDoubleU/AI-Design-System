@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "description": "LLM-ready design system with a complete token layer and structured specs.",
   "scripts": {
-    "docs":        "node scripts/build-docs.js",
-    "docs:shadcn": "node scripts/build-docs.js --library=shadcn",
-    "docs:antd":   "node scripts/build-docs.js --library=antdesign",
-    "docs:mui":    "node scripts/build-docs.js --library=mui",
+    "docs":          "node scripts/build-docs.js",
+    "docs:shadcn":   "node scripts/build-docs.js --library=shadcn",
+    "docs:antd":     "node scripts/build-docs.js --library=antdesign",
+    "docs:mui":      "node scripts/build-docs.js --library=mui",
+    "docs:vanilla":  "node scripts/build-docs.js --library=vanilla",
     "audit":       "node scripts/token-audit.js .",
     "audit:src":   "node scripts/token-audit.js src"
   },
