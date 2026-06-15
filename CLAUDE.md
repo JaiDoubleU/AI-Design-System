@@ -247,3 +247,70 @@ To plug in any upstream DS (e.g., Material, Radix, a Figma-exported token set):
 ```
 
 No component CSS needs to change. The `var(--ds-x, fallback)` chain handles it.
+
+---
+
+## Generating component docs
+
+Run the doc builder to scrape a library's component docs and auto-update
+this file and `AGENTS.md` with the correct references:
+
+```bash
+npm run docs -- --library=shadcn      # shadcn/ui (already scraped)
+npm run docs -- --library=antdesign   # Ant Design v5
+npm run docs -- --library=mui         # Material UI v6
+npm run docs -- --library=shadcn --force  # re-scrape even if docs exist
+```
+
+Shorthand aliases: `npm run docs:shadcn`, `npm run docs:antd`, `npm run docs:mui`
+
+<!-- ACTIVE-LIBRARY:START -->
+## Active component library: shadcn/ui v4
+
+**Component docs:** `shadcn-docs/` (59 components — read before generating code)
+**Index:** `shadcn-docs/INDEX.md`
+**Adapter CSS:** `lib-adapters/shadcn.css`
+**Adapter spec:** `specs/adapters/shadcn.md`
+**Official docs:** https://ui.shadcn.com/docs/components
+
+### Setup
+
+Requires shadcn/ui v4 with globals.css defining --primary, --background, --foreground, --border, --ring, --radius.
+
+```css
+/* 1. shadcn globals */
+@import '@/styles/globals.css';
+
+/* 2. AI Design System adapter */
+@import 'ai-design-system/lib-adapters/shadcn.css';
+
+/* 3. AI Design System tokens */
+@import 'ai-design-system/tokens.css';
+```
+
+```js
+import { applyAdapter } from 'ai-design-system/lib-adapters';
+applyAdapter('shadcn');
+```
+
+### AI Design System → shadcn/ui class map
+
+| AI DS class | shadcn/ui equivalent |
+|---|---|
+| `.btn` | `<Button>` |
+| `.card` | `<Card>` |
+| `.input` | `<Input>` |
+| `.badge` | `<Badge>` |
+| `.alert` | `<Alert>` |
+| `.select` | `<Select>` |
+| `.checkbox` | `<Checkbox>` |
+| `.radio` | `<RadioGroupItem>` |
+
+### Rules when writing code with this library
+
+- Read `shadcn-docs/{component}.md` before generating code for any component.
+- Use `getComponentInfo(concept, 'shadcn')` from `lib-adapters/component-map.js`
+  to find the correct import and props for any AI DS concept.
+- Apply the CSS adapter before `tokens.css` so `--ds-*` hooks resolve correctly.
+- Never hard-code colours, spacing, or typography — use `var(--color-*)`, `var(--spacing-*)`, etc.
+<!-- ACTIVE-LIBRARY:END -->
