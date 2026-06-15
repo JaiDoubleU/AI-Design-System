@@ -5,12 +5,20 @@
  * Scans CSS/SCSS files for hardcoded design values and suggests token
  * replacements. Exits with code 1 when errors are present (CI-ready).
  *
+ * When ds.config.json is present (written by `npm run docs`) the audit
+ * also checks for layer violations:
+ *   - var(--prim-*) in component CSS  → always an error
+ *   - var(--ds-*)   in component CSS  → always an error
+ *   - Direct library variable usage   → warning (shadcn globals, --ant-*, --mui-*)
+ *
  * Errors   — must be fixed before commit:
  *   colors (hex, rgb, rgba, hsl, hsla), spacing/sizing (px/rem on
- *   layout properties), font-size, font-weight, border-radius, box-shadow
+ *   layout properties), font-size, font-weight, border-radius, box-shadow,
+ *   layer violations (--prim-* / --ds-* in component CSS)
  *
  * Warnings — should be reviewed:
- *   z-index numbers, transition/animation durations
+ *   z-index numbers, transition/animation durations,
+ *   direct library variable bypass (--ant-*, --mui-*, shadcn globals)
  *
  * Usage:
  *   node scripts/token-audit.js [directory]   # defaults to cwd
@@ -130,6 +138,105 @@ const Z_MAP = {
   '700': '--z-tooltip',
 };
 
+/* ── Layer-violation maps ─────────────────────────────────────────── */
+
+// Maps --ds-* internal hooks to their Layer 2 equivalents for suggestions.
+const DS_TO_LAYER2 = {
+  '--ds-text':               '--color-text',
+  '--ds-text-subtle':        '--color-text-subtle',
+  '--ds-text-muted':         '--color-text-muted',
+  '--ds-text-inverse':       '--color-text-inverse',
+  '--ds-text-danger':        '--color-text-danger',
+  '--ds-text-success':       '--color-text-success',
+  '--ds-text-warning':       '--color-text-warning',
+  '--ds-text-info':          '--color-text-info',
+  '--ds-bg':                 '--color-bg',
+  '--ds-bg-subtle':          '--color-bg-subtle',
+  '--ds-bg-muted':           '--color-bg-muted',
+  '--ds-bg-emphasis':        '--color-bg-emphasis',
+  '--ds-bg-success':         '--color-bg-success',
+  '--ds-bg-warning':         '--color-bg-warning',
+  '--ds-bg-danger':          '--color-bg-danger',
+  '--ds-bg-info':            '--color-bg-info',
+  '--ds-interactive':        '--color-interactive',
+  '--ds-interactive-hover':  '--color-interactive-hover',
+  '--ds-interactive-active': '--color-interactive-active',
+  '--ds-interactive-muted':  '--color-interactive-muted',
+  '--ds-interactive-fg':     '--color-interactive-fg',
+  '--ds-interactive-danger': '--color-interactive-danger',
+  '--ds-border':             '--color-border',
+  '--ds-border-subtle':      '--color-border-subtle',
+  '--ds-border-emphasis':    '--color-border-emphasis',
+  '--ds-border-focus':       '--color-border-focus',
+  '--ds-border-success':     '--color-border-success',
+  '--ds-border-danger':      '--color-border-danger',
+  '--ds-radius-sm':          '--radius-sm',
+  '--ds-radius-md':          '--radius-md',
+  '--ds-radius-lg':          '--radius-lg',
+  '--ds-radius-xl':          '--radius-xl',
+  '--ds-radius-full':        '--radius-full',
+  '--ds-radius-none':        '--radius-none',
+  '--ds-font-sans':          '--font-sans',
+  '--ds-font-mono':          '--font-mono',
+  '--ds-font-serif':         '--font-serif',
+  '--ds-shadow-sm':          '--shadow-sm',
+  '--ds-shadow-md':          '--shadow-md',
+  '--ds-shadow-lg':          '--shadow-lg',
+};
+
+// Per-library patterns that flag direct use of upstream library variables in
+// component CSS. Component CSS must go through the Layer 2 token chain, not
+// reach past the adapter into the library's own variables.
+const LIBRARY_VAR_PATTERNS = {
+  shadcn: {
+    // shadcn/ui v4 globals.css — bare variable names exposed by the library.
+    // Use a lookahead so "--primary-color" doesn't match "--primary".
+    patternSource: 'var\\(--(background|foreground|card|card-foreground|popover|popover-foreground|primary|primary-foreground|secondary|secondary-foreground|muted|muted-foreground|accent|accent-foreground|destructive|destructive-foreground|border|input|ring|radius|chart-\\d+)(?=[,)\\s/])',
+    flags: 'g',
+    label: 'shadcn/ui global variable',
+    hint: 'Route through the adapter — use var(--color-*) or another Layer 2 token',
+  },
+  antdesign: {
+    patternSource: 'var\\(--ant-[a-z][^)]*\\)',
+    flags: 'g',
+    label: 'Ant Design CSS variable',
+    hint: 'Route through the adapter — use var(--color-*) or another Layer 2 token',
+  },
+  mui: {
+    patternSource: 'var\\(--mui-[a-z][^)]*\\)',
+    flags: 'g',
+    label: 'Material UI CSS variable',
+    hint: 'Route through the adapter — use var(--color-*) or another Layer 2 token',
+  },
+  vanilla: null, // no upstream library variables to flag
+};
+
+/* ── Library config loader ───────────────────────────────────────── */
+
+function loadLibraryConfig(rootDir) {
+  // Walk up from rootDir (and also try process.cwd()) to find ds.config.json.
+  // This ensures `npm run audit:src` (scanning src/) finds the config at project root.
+  const candidates = new Set([
+    rootDir,
+    process.cwd(),
+  ]);
+  let dir = rootDir;
+  while (true) {
+    candidates.add(dir);
+    const parent = path.dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  for (const candidate of candidates) {
+    const configPath = path.join(candidate, 'ds.config.json');
+    if (fs.existsSync(configPath)) {
+      try { return JSON.parse(fs.readFileSync(configPath, 'utf8')); }
+      catch { return null; }
+    }
+  }
+  return null;
+}
+
 /* ── Utilities ───────────────────────────────────────────────────── */
 
 function findCssFiles(dir) {
@@ -184,7 +291,7 @@ function violation(file, lineNum, type, category, message, value, suggestion, co
 
 /* ── Per-line analysis ───────────────────────────────────────────── */
 
-function checkLine(rawLine, lineNum, filePath) {
+function checkLine(rawLine, lineNum, filePath, libConfig) {
   const results = [];
   if (isCommentLine(rawLine)) return results;
 
@@ -236,6 +343,61 @@ function checkLine(rawLine, lineNum, filePath) {
         'var(--color-*)',
         rawLine,
       ));
+    }
+  }
+
+  /* ── Layer violation checks (always run, even when line uses a token) ── */
+
+  // --prim-* in component CSS: direct primitive reference (Layer 1 bypass).
+  {
+    const primRe = /var\(--prim-([a-zA-Z0-9-]+)/g;
+    let m;
+    while ((m = primRe.exec(stripped)) !== null) {
+      results.push(violation(
+        filePath, lineNum, 'error', 'layer',
+        'Direct Layer 1 primitive — use a Layer 2 token instead',
+        `var(--prim-${m[1]})`,
+        'var(--color-*) / var(--spacing-*) / var(--text-*) etc.',
+        rawLine,
+      ));
+    }
+  }
+
+  // --ds-* in component CSS: internal adapter hook (should only appear in
+  // tokens.css and lib-adapters/, both of which are in skip lists).
+  {
+    const dsRe = /var\(--ds-([a-zA-Z0-9-]+)/g;
+    let m;
+    while ((m = dsRe.exec(stripped)) !== null) {
+      const dsVar  = `--ds-${m[1]}`;
+      const layer2 = DS_TO_LAYER2[dsVar];
+      results.push(violation(
+        filePath, lineNum, 'error', 'layer',
+        'Internal adapter hook in component CSS — use a Layer 2 token',
+        `var(${dsVar})`,
+        layer2 ? `var(${layer2})` : 'var(--color-*) or another Layer 2 token',
+        rawLine,
+      ));
+    }
+  }
+
+  /* ── Library-specific bypass check ────────────────────────────── */
+  // Warn when component CSS reaches past the adapter and references the
+  // upstream library's own CSS variables directly.
+  if (libConfig) {
+    const libPattern = LIBRARY_VAR_PATTERNS[libConfig.library];
+    if (libPattern) {
+      const re = new RegExp(libPattern.patternSource, libPattern.flags);
+      let m;
+      while ((m = re.exec(stripped)) !== null) {
+        results.push(violation(
+          filePath, lineNum, 'warning', 'library',
+          `Direct ${libPattern.label} — bypasses token layer`,
+          m[0],
+          libPattern.hint,
+          rawLine,
+        ));
+      }
     }
   }
 
@@ -377,12 +539,12 @@ function checkLine(rawLine, lineNum, filePath) {
 
 /* ── File audit ──────────────────────────────────────────────────── */
 
-function auditFile(filePath) {
-  const content = fs.readFileSync(filePath, 'utf-8');
+function auditFile(filePath, libConfig) {
+  const content = fs.readFileSync(filePath, 'utf8');
   const lines   = content.split('\n');
   const results = [];
   for (let i = 0; i < lines.length; i++) {
-    results.push(...checkLine(lines[i], i + 1, filePath));
+    results.push(...checkLine(lines[i], i + 1, filePath, libConfig));
   }
   return results;
 }
@@ -390,12 +552,23 @@ function auditFile(filePath) {
 /* ── Main ────────────────────────────────────────────────────────── */
 
 function main() {
-  const rootDir = path.resolve(process.argv[2] || process.cwd());
-  const files   = findCssFiles(rootDir).sort();
+  const rootDir   = path.resolve(process.argv[2] || process.cwd());
+  const libConfig = loadLibraryConfig(rootDir);
+  const files     = findCssFiles(rootDir).sort();
 
   const pad = n => String(n).padStart(String(files.length).length);
   console.log(`\n🔍  Token Audit`);
   console.log(`    Root: ${rootDir}`);
+  if (libConfig) {
+    console.log(`    Library: ${libConfig.name} ${libConfig.version}  (${libConfig.adapterCss})`);
+    const libEntry = LIBRARY_VAR_PATTERNS[libConfig.library];
+    if (libEntry) {
+      console.log(`    Library check: direct ${libConfig.name} variable usage → warning`);
+    }
+  } else {
+    console.log(`    Library: not detected  (run "npm run docs -- --library=<name>" to enable library checks)`);
+  }
+  console.log(`    Layer checks: var(--prim-*) and var(--ds-*) in component CSS → error`);
   console.log(`    Files scanned: ${files.length}\n`);
 
   if (files.length === 0) {
@@ -408,7 +581,7 @@ function main() {
   const dirtyFiles  = [];
 
   for (const file of files) {
-    const violations = auditFile(file);
+    const violations = auditFile(file, libConfig);
     const errors     = violations.filter(v => v.type === 'error');
     const warnings   = violations.filter(v => v.type === 'warning');
     totalErrors   += errors.length;

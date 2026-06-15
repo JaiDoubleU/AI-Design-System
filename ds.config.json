@@ -1,0 +1,7 @@
+{
+  "library": "vanilla",
+  "name": "Vanilla HTML/CSS/JS",
+  "version": "native",
+  "docsDir": "vanilla-docs",
+  "adapterCss": "lib-adapters/vanilla.css"
+}

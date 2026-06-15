@@ -419,6 +419,21 @@ ${buildLibrarySection(lib, docsCount)}
   console.log('✓  Wrote AGENTS.md.');
 }
 
+/* ─── Library config writer ──────────────────────────────────────────────── */
+
+function writeLibraryConfig(libKey, lib) {
+  const config = {
+    library:    libKey,
+    name:       lib.name,
+    version:    lib.version,
+    docsDir:    lib.docsDir,
+    adapterCss: lib.adapterCss,
+  };
+  const configPath = path.join(ROOT, 'ds.config.json');
+  fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + '\n', 'utf8');
+  console.log('✓  Wrote ds.config.json.');
+}
+
 /* ─── Doc count helper ───────────────────────────────────────────────────── */
 
 function countDocs(docsDir) {
@@ -463,6 +478,7 @@ function main() {
 
   updateClaudeMd(lib, docsCount);
   writeAgentsMd(lib, docsCount);
+  writeLibraryConfig(libKey, lib);
 
   console.log(`\n✅  Done. Active library set to ${lib.name} ${lib.version}.`);
   console.log(`   Component docs: ${lib.docsDir}/ (${docsCount} files)`);
