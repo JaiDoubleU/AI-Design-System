@@ -173,8 +173,10 @@ function runScraper(lib, python) {
 
 /* ─── CLAUDE.md updater ──────────────────────────────────────────────────── */
 
-const MARKER_START = '<!-- ACTIVE-LIBRARY:START -->';
-const MARKER_END   = '<!-- ACTIVE-LIBRARY:END -->';
+const MARKER_START    = '<!-- ACTIVE-LIBRARY:START -->';
+const MARKER_END      = '<!-- ACTIVE-LIBRARY:END -->';
+const DOCSDIR_START   = '<!-- DOCS-DIR:START -->';
+const DOCSDIR_END     = '<!-- DOCS-DIR:END -->';
 
 function buildLibrarySection(lib, docsCount) {
   const classRows = Object.entries(lib.classMap)
@@ -218,6 +220,22 @@ ${classRows}
 ${MARKER_END}`;
 }
 
+function replaceMarker(content, start, end, replacement) {
+  if (content.includes(start)) {
+    const s = content.indexOf(start);
+    const e = content.indexOf(end) + end.length;
+    return content.slice(0, s) + replacement + content.slice(e);
+  }
+  return content;
+}
+
+function buildDocsDirEntry(lib, docsCount) {
+  return `${DOCSDIR_START}
+${lib.docsDir}/                   ← Active library docs (${docsCount} components — read before writing code)
+  INDEX.md
+${DOCSDIR_END}`;
+}
+
 function updateClaudeMd(lib, docsCount) {
   const filePath = path.join(ROOT, 'CLAUDE.md');
   if (!fs.existsSync(filePath)) {
@@ -226,18 +244,23 @@ function updateClaudeMd(lib, docsCount) {
   }
 
   let content = fs.readFileSync(filePath, 'utf8');
-  const section = buildLibrarySection(lib, docsCount);
 
+  // Update active library section
+  const section = buildLibrarySection(lib, docsCount);
   if (content.includes(MARKER_START)) {
-    const startIdx = content.indexOf(MARKER_START);
-    const endIdx   = content.indexOf(MARKER_END) + MARKER_END.length;
-    content = content.slice(0, startIdx) + section + content.slice(endIdx);
+    content = replaceMarker(content, MARKER_START, MARKER_END, section);
   } else {
     content = content.trimEnd() + '\n\n---\n\n' + section + '\n';
   }
 
+  // Update docs directory entry inside the file map
+  const docsDirEntry = buildDocsDirEntry(lib, docsCount);
+  if (content.includes(DOCSDIR_START)) {
+    content = replaceMarker(content, DOCSDIR_START, DOCSDIR_END, docsDirEntry);
+  }
+
   fs.writeFileSync(filePath, content, 'utf8');
-  console.log('✓  Updated CLAUDE.md with active library section.');
+  console.log('✓  Updated CLAUDE.md (active library + file map).');
 }
 
 /* ─── AGENTS.md writer ───────────────────────────────────────────────────── */
@@ -249,9 +272,10 @@ function writeAgentsMd(lib, docsCount) {
 
   const content = `# AI Design System — Agent Instructions
 
-> This file is read by AI coding agents (Claude, Codex, Copilot, etc.).
-> It is auto-updated by \`npm run docs -- --library=<name>\`.
-> Do not edit the "Active library" section manually.
+> **Active library: ${lib.name} ${lib.version}**
+> Component docs: \`${lib.docsDir}/\` · Adapter: \`${lib.adapterCss}\`
+> Switch library: \`npm run docs -- --library=<shadcn|antdesign|mui>\`
+> This file is auto-maintained — do not edit the "Active library" section manually.
 
 ---
 
@@ -273,10 +297,11 @@ Key capabilities:
 
 1. **Tokens only in component CSS.** Use \`var(--color-*)\`, \`var(--spacing-*)\`,
    \`var(--text-*)\`, \`var(--radius-*)\`. Never raw \`px\`, \`#hex\`, or \`--prim-*\`.
-2. **Read specs before writing CSS.** Check \`specs/components/\` and
-   \`specs/tokens/token-reference.md\` first.
-3. **Audit must pass.** Run \`npm run audit\` before every commit. Exit 0 required.
-4. **Adapter files are exempt** from the token audit (\`lib-adapters/\` is skipped).
+2. **Read component docs before writing code.** Check \`${lib.docsDir}/{component}.md\`
+   for ${lib.name}-specific usage, then \`specs/components/\` for AI DS class names.
+3. **Read specs before writing CSS.** Check \`specs/tokens/token-reference.md\` first.
+4. **Audit must pass.** Run \`npm run audit\` before every commit. Exit 0 required.
+5. **Adapter files are exempt** from the token audit (\`lib-adapters/\` is skipped).
 
 ---
 
@@ -299,7 +324,7 @@ Layer 3  src/ CSS        References Layer 2 exclusively.
 
 1. Read \`specs/tokens/token-reference.md\` — master token map.
 2. Read the relevant \`specs/foundations/\` file for the property type.
-3. Read \`specs/components/{name}.md\` if modifying a component.
+3. Read \`specs/components/{name}.md\` if modifying an AI DS component.
 
 ---
 
@@ -318,6 +343,9 @@ npm run audit:src    # scan src/ only
 
 \`\`\`
 tokens.css                     ← Layer 1 + Layer 2 tokens (source of truth)
+${lib.docsDir}/                        ← Active library docs (${docsCount} components)
+  INDEX.md                     ← Component list — start here
+  {component}.md               ← Per-component: import, props, DS token mapping
 src/
   base/reset.css               ← CSS reset
   base/typography.css          ← .heading-*, .text-*, .prose, .code-inline
@@ -327,18 +355,16 @@ src/
   components/badge.css         ← .badge, .badge-success, .badge-count …
   components/alert.css         ← .alert, .alert-danger, .alert-toast …
 lib-adapters/
-  shadcn.css                   ← shadcn/ui v4 → --ds-* bridge
-  ant-design.css               ← Ant Design v5 → --ds-* bridge
-  material-ui.css              ← Material UI v6 → --ds-* bridge
+  ${lib.adapterCss.replace('lib-adapters/', '')}${' '.repeat(Math.max(1, 30 - lib.adapterCss.replace('lib-adapters/', '').length))}← Active adapter (${lib.name} → --ds-*)
   component-map.js             ← Cross-library component equivalence
   index.js                     ← detectLibrary, applyAdapter, createAdapter
 specs/
   tokens/token-reference.md    ← Every token, its value and purpose
   foundations/                 ← color, spacing, typography, radius, elevation, motion
   components/                  ← Per-component anatomy, API, token table, examples
-  adapters/                    ← Adapter setup guides + custom adapter reference
+  adapters/${lib.adapterSpec.replace('specs/adapters/', '')}${' '.repeat(Math.max(1, 24 - lib.adapterSpec.replace('specs/adapters/', '').length))}← Active adapter setup guide
 scripts/
-  build-docs.js                ← This build script
+  build-docs.js                ← Switch active library (npm run docs:shadcn etc.)
   token-audit.js               ← CI audit script
 \`\`\`
 

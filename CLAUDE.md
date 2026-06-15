@@ -168,7 +168,12 @@ specs/
     material-ui.md
     custom.md                  ← Build your own adapter
 scripts/
+  build-docs.js                ← Doc builder (run to switch active library)
   token-audit.js               ← CI-ready audit script
+<!-- DOCS-DIR:START -->
+shadcn-docs/                   ← Active library docs (59 components — read before writing code)
+  INDEX.md
+<!-- DOCS-DIR:END -->
 ```
 
 ---

@@ -1,8 +1,9 @@
 # AI Design System — Agent Instructions
 
-> This file is read by AI coding agents (Claude, Codex, Copilot, etc.).
-> It is auto-updated by `npm run docs -- --library=<name>`.
-> Do not edit the "Active library" section manually.
+> **Active library: shadcn/ui v4**
+> Component docs: `shadcn-docs/` · Adapter: `lib-adapters/shadcn.css`
+> Switch library: `npm run docs -- --library=<shadcn|antdesign|mui>`
+> This file is auto-maintained — do not edit the "Active library" section manually.
 
 ---
 
@@ -24,10 +25,11 @@ Key capabilities:
 
 1. **Tokens only in component CSS.** Use `var(--color-*)`, `var(--spacing-*)`,
    `var(--text-*)`, `var(--radius-*)`. Never raw `px`, `#hex`, or `--prim-*`.
-2. **Read specs before writing CSS.** Check `specs/components/` and
-   `specs/tokens/token-reference.md` first.
-3. **Audit must pass.** Run `npm run audit` before every commit. Exit 0 required.
-4. **Adapter files are exempt** from the token audit (`lib-adapters/` is skipped).
+2. **Read component docs before writing code.** Check `shadcn-docs/{component}.md`
+   for shadcn/ui-specific usage, then `specs/components/` for AI DS class names.
+3. **Read specs before writing CSS.** Check `specs/tokens/token-reference.md` first.
+4. **Audit must pass.** Run `npm run audit` before every commit. Exit 0 required.
+5. **Adapter files are exempt** from the token audit (`lib-adapters/` is skipped).
 
 ---
 
@@ -50,7 +52,7 @@ Layer 3  src/ CSS        References Layer 2 exclusively.
 
 1. Read `specs/tokens/token-reference.md` — master token map.
 2. Read the relevant `specs/foundations/` file for the property type.
-3. Read `specs/components/{name}.md` if modifying a component.
+3. Read `specs/components/{name}.md` if modifying an AI DS component.
 
 ---
 
@@ -69,6 +71,9 @@ npm run audit:src    # scan src/ only
 
 ```
 tokens.css                     ← Layer 1 + Layer 2 tokens (source of truth)
+shadcn-docs/                        ← Active library docs (59 components)
+  INDEX.md                     ← Component list — start here
+  {component}.md               ← Per-component: import, props, DS token mapping
 src/
   base/reset.css               ← CSS reset
   base/typography.css          ← .heading-*, .text-*, .prose, .code-inline
@@ -78,18 +83,16 @@ src/
   components/badge.css         ← .badge, .badge-success, .badge-count …
   components/alert.css         ← .alert, .alert-danger, .alert-toast …
 lib-adapters/
-  shadcn.css                   ← shadcn/ui v4 → --ds-* bridge
-  ant-design.css               ← Ant Design v5 → --ds-* bridge
-  material-ui.css              ← Material UI v6 → --ds-* bridge
+  shadcn.css                    ← Active adapter (shadcn/ui → --ds-*)
   component-map.js             ← Cross-library component equivalence
   index.js                     ← detectLibrary, applyAdapter, createAdapter
 specs/
   tokens/token-reference.md    ← Every token, its value and purpose
   foundations/                 ← color, spacing, typography, radius, elevation, motion
   components/                  ← Per-component anatomy, API, token table, examples
-  adapters/                    ← Adapter setup guides + custom adapter reference
+  adapters/shadcn.md               ← Active adapter setup guide
 scripts/
-  build-docs.js                ← This build script
+  build-docs.js                ← Switch active library (npm run docs:shadcn etc.)
   token-audit.js               ← CI audit script
 ```
 
