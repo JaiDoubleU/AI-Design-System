@@ -1,0 +1,69 @@
+/*
+ * shadcn/ui → AI Design System adapter
+ *
+ * Import AFTER the shadcn/ui globals (globals.css) and BEFORE tokens.css.
+ *
+ *   @import './shadcn-globals.css';
+ *   @import 'ai-design-system/lib-adapters/shadcn.css';
+ *   @import 'ai-design-system/tokens.css';
+ *
+ * shadcn/ui exposes CSS variables via the .cn-* convention (v4) or bare
+ * names (v2/v3). Both are handled below with fallbacks.
+ * Docs: https://ui.shadcn.com/docs/theming
+ */
+
+:root {
+  /* ── Text ──────────────────────────────────────────────────── */
+  --ds-text:               var(--foreground);
+  --ds-text-subtle:        var(--muted-foreground);
+  --ds-text-muted:         var(--muted-foreground);
+  --ds-text-inverse:       var(--primary-foreground);
+  --ds-text-danger:        var(--destructive);
+  --ds-text-success:       hsl(var(--success, 142 76% 36%));
+  --ds-text-warning:       hsl(var(--warning, 38 92% 40%));
+  --ds-text-info:          var(--primary);
+
+  /* ── Backgrounds ──────────────────────────────────────────── */
+  --ds-bg:                 var(--background);
+  --ds-bg-subtle:          var(--muted);
+  --ds-bg-muted:           var(--muted);
+  --ds-bg-emphasis:        var(--foreground);
+  --ds-bg-success:         hsl(var(--success, 142 76% 36%) / 0.15);
+  --ds-bg-warning:         hsl(var(--warning, 38 92% 50%) / 0.15);
+  --ds-bg-danger:          hsl(var(--destructive) / 0.15);
+  --ds-bg-info:            hsl(var(--primary) / 0.1);
+
+  /* ── Interactive (primary action) ────────────────────────── */
+  --ds-interactive:        hsl(var(--primary));
+  --ds-interactive-hover:  hsl(var(--primary) / 0.9);
+  --ds-interactive-active: hsl(var(--primary) / 0.8);
+  --ds-interactive-muted:  hsl(var(--primary) / 0.1);
+  --ds-interactive-fg:     var(--primary-foreground);
+  --ds-interactive-danger: hsl(var(--destructive));
+
+  /* ── Borders ──────────────────────────────────────────────── */
+  --ds-border:             var(--border);
+  --ds-border-subtle:      hsl(var(--border) / 0.5);
+  --ds-border-emphasis:    var(--ring);
+  --ds-border-focus:       var(--ring);
+  --ds-border-success:     hsl(var(--success, 142 76% 36%) / 0.5);
+  --ds-border-danger:      hsl(var(--destructive) / 0.5);
+
+  /* ── Radius ───────────────────────────────────────────────── */
+  --ds-radius-sm:          calc(var(--radius) - 4px);
+  --ds-radius-md:          calc(var(--radius) - 2px);
+  --ds-radius-lg:          var(--radius);
+  --ds-radius-xl:          calc(var(--radius) + 4px);
+  --ds-radius-full:        9999px;
+  --ds-radius-none:        0px;
+
+  /* ── Typography ───────────────────────────────────────────── */
+  --ds-font-sans:          var(--font-sans, ui-sans-serif, system-ui, sans-serif);
+  --ds-font-mono:          var(--font-mono, ui-monospace, 'Cascadia Code', monospace);
+  --ds-font-serif:         var(--font-serif, ui-serif, Georgia, serif);
+
+  /* ── Shadows ──────────────────────────────────────────────── */
+  --ds-shadow-sm:          0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --ds-shadow-md:          0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --ds-shadow-lg:          0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}

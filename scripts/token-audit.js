@@ -30,7 +30,7 @@ const SKIP_FILES = new Set(['tokens.css', 'reset.css']);
 // These directories are never scanned.
 const SKIP_DIRS = new Set([
   'node_modules', '.git', 'scripts', 'specs', 'dist', 'build',
-  '.cache', 'coverage',
+  '.cache', 'coverage', 'lib-adapters',
 ]);
 
 /* ── Token suggestion maps ───────────────────────────────────────── */

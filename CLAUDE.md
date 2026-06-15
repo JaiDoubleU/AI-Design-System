@@ -138,6 +138,12 @@ src/
     input.css
     badge.css
     alert.css
+lib-adapters/
+  shadcn.css                   ← shadcn/ui v4 → --ds-* mapping
+  ant-design.css               ← Ant Design v5 → --ds-* mapping
+  material-ui.css              ← Material UI v6 → --ds-* mapping
+  component-map.js             ← Cross-library component equivalence table
+  index.js                     ← JS utilities: detectLibrary, applyAdapter, createAdapter
 specs/
   foundations/
     color.md
@@ -155,15 +161,78 @@ specs/
     badge.md
     alert.md
     typography.md
+  adapters/
+    overview.md                ← Adapter system overview (read before using)
+    shadcn.md
+    ant-design.md
+    material-ui.md
+    custom.md                  ← Build your own adapter
 scripts/
   token-audit.js               ← CI-ready audit script
 ```
 
 ---
 
+## Multi-library adapter system
+
+The adapter system maps any upstream library's CSS variables to `--ds-*`
+hooks so component CSS works unchanged across shadcn/ui, Ant Design, MUI,
+or a custom brand token set.
+
+**Read `specs/adapters/overview.md` before adding or modifying adapters.**
+
+### CSS-only usage (preferred for static bundles)
+
+```css
+/* Import order matters — adapter must come between library styles and tokens.css */
+@import 'antd/dist/reset.css';
+@import 'ai-design-system/lib-adapters/ant-design.css';
+@import 'ai-design-system/tokens.css';
+```
+
+Supported static adapters:
+- `lib-adapters/shadcn.css` — shadcn/ui v4
+- `lib-adapters/ant-design.css` — Ant Design v5 (requires `cssVar: true`)
+- `lib-adapters/material-ui.css` — MUI v6 (requires `cssVariables: true`)
+
+### JavaScript runtime usage
+
+```js
+import { applyAdapter, detectLibrary, createAdapter } from 'ai-design-system/lib-adapters';
+
+applyAdapter('shadcn');               // explicit
+applyAdapter(detectLibrary());        // auto-detect from loaded CSS vars
+```
+
+### Custom adapter
+
+```js
+import { createAdapter } from 'ai-design-system/lib-adapters';
+const myAdapter = createAdapter({ '--ds-interactive': '--brand-blue' });
+myAdapter(); // applies to :root
+```
+
+### Component equivalence
+
+When building with an upstream library, find the nearest equivalent:
+
+```js
+import { getComponentInfo } from 'ai-design-system/lib-adapters';
+getComponentInfo('button', 'antDesign');
+// → { component: 'Button', import: "import { Button } from 'antd'", … }
+```
+
+### Token audit exemption
+
+Files in `lib-adapters/` are exempt from the audit script. Adapter files
+intentionally contain bridge values (raw values or upstream `var(--*)` 
+references) and are not component CSS.
+
+---
+
 ## Upstream design system integration
 
-To plug in an upstream DS (e.g., Material, Radix, a Figma-exported token set):
+To plug in any upstream DS (e.g., Material, Radix, a Figma-exported token set):
 
 ```css
 /* 1. Override --ds-* variables */
