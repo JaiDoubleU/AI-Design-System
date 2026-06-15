@@ -1,0 +1,75 @@
+/*
+ * Material UI (MUI) v6 → AI Design System adapter
+ *
+ * MUI v6 ships CSS variables mode via CssVarsProvider. Enable it:
+ *
+ *   import { Experimental_CssVarsProvider as CssVarsProvider } from '@mui/material/styles';
+ *   // or in MUI v6+: <ThemeProvider theme={theme}> with cssVariables: true
+ *
+ * Import this adapter AFTER MUI styles and BEFORE tokens.css:
+ *
+ *   import 'ai-design-system/lib-adapters/material-ui.css';
+ *   import 'ai-design-system/tokens.css';
+ *
+ * MUI v5 (without CSS vars) uses JS-only theming. In that case use the
+ * JavaScript adapter instead: lib-adapters/index.js → applyAdapter('mui')
+ *
+ * Docs: https://mui.com/material-ui/customization/css-theme-variables/
+ */
+
+:root {
+  /* ── Text ──────────────────────────────────────────────────── */
+  --ds-text:               var(--mui-palette-text-primary);
+  --ds-text-subtle:        var(--mui-palette-text-secondary);
+  --ds-text-muted:         var(--mui-palette-text-disabled);
+  --ds-text-inverse:       var(--mui-palette-primary-contrastText);
+  --ds-text-danger:        var(--mui-palette-error-main);
+  --ds-text-success:       var(--mui-palette-success-main);
+  --ds-text-warning:       var(--mui-palette-warning-main);
+  --ds-text-info:          var(--mui-palette-info-main);
+
+  /* ── Backgrounds ──────────────────────────────────────────── */
+  --ds-bg:                 var(--mui-palette-background-default);
+  --ds-bg-subtle:          var(--mui-palette-background-paper);
+  --ds-bg-muted:           var(--mui-palette-action-hover);
+  --ds-bg-emphasis:        var(--mui-palette-text-primary);
+  --ds-bg-success:         var(--mui-palette-success-light, rgb(237 247 237));
+  --ds-bg-warning:         var(--mui-palette-warning-light, rgb(255 244 229));
+  --ds-bg-danger:          var(--mui-palette-error-light, rgb(253 237 237));
+  --ds-bg-info:            var(--mui-palette-info-light, rgb(229 246 253));
+
+  /* ── Interactive (primary action) ────────────────────────── */
+  --ds-interactive:        var(--mui-palette-primary-main);
+  --ds-interactive-hover:  var(--mui-palette-primary-dark);
+  --ds-interactive-active: var(--mui-palette-primary-dark);
+  --ds-interactive-muted:  var(--mui-palette-primary-light, rgb(229 242 255));
+  --ds-interactive-fg:     var(--mui-palette-primary-contrastText);
+  --ds-interactive-danger: var(--mui-palette-error-main);
+
+  /* ── Borders ──────────────────────────────────────────────── */
+  --ds-border:             var(--mui-palette-divider);
+  --ds-border-subtle:      var(--mui-palette-action-disabledBackground);
+  --ds-border-emphasis:    var(--mui-palette-primary-main);
+  --ds-border-focus:       var(--mui-palette-primary-main);
+  --ds-border-success:     var(--mui-palette-success-main);
+  --ds-border-danger:      var(--mui-palette-error-main);
+
+  /* ── Radius ───────────────────────────────────────────────── */
+  /* MUI borderRadius is a unitless number (px implied). Wrap with calc(). */
+  --ds-radius-sm:          calc(var(--mui-shape-borderRadius) * 0.5px);
+  --ds-radius-md:          calc(var(--mui-shape-borderRadius) * 1px);
+  --ds-radius-lg:          calc(var(--mui-shape-borderRadius) * 1.5px);
+  --ds-radius-xl:          calc(var(--mui-shape-borderRadius) * 2px);
+  --ds-radius-full:        9999px;
+  --ds-radius-none:        0px;
+
+  /* ── Typography ───────────────────────────────────────────── */
+  --ds-font-sans:          var(--mui-font-family, '"Roboto","Helvetica","Arial",sans-serif');
+  --ds-font-mono:          'Roboto Mono', ui-monospace, monospace;
+  --ds-font-serif:         ui-serif, Georgia, serif;
+
+  /* ── Shadows ──────────────────────────────────────────────── */
+  --ds-shadow-sm:          var(--mui-shadows-1);
+  --ds-shadow-md:          var(--mui-shadows-3);
+  --ds-shadow-lg:          var(--mui-shadows-8);
+}

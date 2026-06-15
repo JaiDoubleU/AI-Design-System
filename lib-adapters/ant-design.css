@@ -1,0 +1,72 @@
+/*
+ * Ant Design v5 → AI Design System adapter
+ *
+ * Ant Design v5 ships a "CSS Variables Mode" that exposes --ant-* tokens.
+ * Enable it in your ConfigProvider:
+ *
+ *   <ConfigProvider theme={{ cssVar: true }}>
+ *
+ * Then import this adapter AFTER Ant Design's styles and BEFORE tokens.css:
+ *
+ *   import 'antd/dist/reset.css';
+ *   import 'ai-design-system/lib-adapters/ant-design.css';
+ *   import 'ai-design-system/tokens.css';
+ *
+ * Docs: https://ant.design/docs/react/css-variables
+ */
+
+:root {
+  /* ── Text ──────────────────────────────────────────────────── */
+  --ds-text:               var(--ant-color-text);
+  --ds-text-subtle:        var(--ant-color-text-secondary);
+  --ds-text-muted:         var(--ant-color-text-quaternary);
+  --ds-text-inverse:       var(--ant-color-text-light-solid, #fff);
+  --ds-text-danger:        var(--ant-color-error-text);
+  --ds-text-success:       var(--ant-color-success-text);
+  --ds-text-warning:       var(--ant-color-warning-text);
+  --ds-text-info:          var(--ant-color-info-text);
+
+  /* ── Backgrounds ──────────────────────────────────────────── */
+  --ds-bg:                 var(--ant-color-bg-base);
+  --ds-bg-subtle:          var(--ant-color-bg-layout);
+  --ds-bg-muted:           var(--ant-color-fill-quaternary);
+  --ds-bg-emphasis:        var(--ant-color-text);
+  --ds-bg-success:         var(--ant-color-success-bg);
+  --ds-bg-warning:         var(--ant-color-warning-bg);
+  --ds-bg-danger:          var(--ant-color-error-bg);
+  --ds-bg-info:            var(--ant-color-info-bg);
+
+  /* ── Interactive (primary action) ────────────────────────── */
+  --ds-interactive:        var(--ant-color-primary);
+  --ds-interactive-hover:  var(--ant-color-primary-hover);
+  --ds-interactive-active: var(--ant-color-primary-active);
+  --ds-interactive-muted:  var(--ant-color-primary-bg);
+  --ds-interactive-fg:     var(--ant-color-text-light-solid, #fff);
+  --ds-interactive-danger: var(--ant-color-error);
+
+  /* ── Borders ──────────────────────────────────────────────── */
+  --ds-border:             var(--ant-color-border);
+  --ds-border-subtle:      var(--ant-color-border-secondary);
+  --ds-border-emphasis:    var(--ant-color-primary);
+  --ds-border-focus:       var(--ant-color-primary-border-hover);
+  --ds-border-success:     var(--ant-color-success-border);
+  --ds-border-danger:      var(--ant-color-error-border);
+
+  /* ── Radius ───────────────────────────────────────────────── */
+  --ds-radius-sm:          var(--ant-border-radius-sm);
+  --ds-radius-md:          var(--ant-border-radius);
+  --ds-radius-lg:          var(--ant-border-radius-lg);
+  --ds-radius-xl:          var(--ant-border-radius-xl);
+  --ds-radius-full:        9999px;
+  --ds-radius-none:        0px;
+
+  /* ── Typography ───────────────────────────────────────────── */
+  --ds-font-sans:          var(--ant-font-family);
+  --ds-font-mono:          var(--ant-font-family-code);
+  --ds-font-serif:         ui-serif, Georgia, serif;
+
+  /* ── Shadows ──────────────────────────────────────────────── */
+  --ds-shadow-sm:          var(--ant-box-shadow-tertiary);
+  --ds-shadow-md:          var(--ant-box-shadow-secondary);
+  --ds-shadow-lg:          var(--ant-box-shadow);
+}
